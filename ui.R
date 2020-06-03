@@ -62,7 +62,7 @@ navbarPage("Normality Assessment",
             
             splitLayout(
               numericInput("gamma_shape", label = "Shape", value = 5),
-              numericInput("gamma_rate", label = "Rate (or Scale ??)", value = 5)   # explain rate vs. scale
+              numericInput("gamma_rate", label = "Rate", value = 5)
             )
           ),
           
@@ -80,7 +80,7 @@ navbarPage("Normality Assessment",
           numericInput("sample_size", label = "Sample Size", value = 20, 
             width = "100%"),
           
-          numericInput("n_plots_rorsch", label = "Number of Plots", value = 12, 
+          numericInput("n_plots_rorsch", label = "Number of Plots", value = 16, 
             width = "100%")
         ),
         
@@ -147,13 +147,7 @@ navbarPage("Normality Assessment",
             min = 5, max = 50, value = 30, width = "50%")
         )
       )
-    ) #,
-  
-    # column(2, 
-    #   actionButton("make_new_rorsch", label = "Generate New Plots", 
-    #     class = "btn btn-primary"),
-    #   style = "padding-top: 50px;"
-    # )
+    )
   ),
 
   
@@ -228,7 +222,7 @@ navbarPage("Normality Assessment",
                 choices = "", selected = "", width = "75%")
             ),
             
-            numericInput("n_plots_lineup", label = "Number of Plots", value = 12, 
+            numericInput("n_plots_lineup", label = "Number of Plots", value = 20, 
               width = "50%"),
         
             radioButtons("lineup_plot_type", label = "Plot Type",
@@ -323,7 +317,7 @@ navbarPage("Normality Assessment",
     column(4,
       
       h4("Out of respect for the blind review process, the author will update 
-         this section after the completion of the process."),
+         this section after the completion of that process."),
       br(),
       
       # information about the developer

@@ -14,7 +14,7 @@ shinyServer(function(session, input, output){
   hist_bins_rorsch_both <- reactive(input$hist_bins_rorsch_both)
   hist_bins_lineup <- reactive(input$hist_bins_lineup)
   hist_bins_lineup_both <- reactive(input$hist_bins_lineup_both)
-  d_hist_bins_rorsch <- debounce(hist_bins_rorsch, 1000)          # 1000 = 1 second delay
+  d_hist_bins_rorsch <- debounce(hist_bins_rorsch, 1000)        # 1000 = 1 second delay
   d_hist_bins_rorsch_both <- debounce(hist_bins_rorsch_both, 1000)
   d_hist_bins_lineup <- debounce(hist_bins_lineup, 1000)
   d_hist_bins_lineup_both <- debounce(hist_bins_lineup_both, 1000)
@@ -310,14 +310,7 @@ shinyServer(function(session, input, output){
     output$user_plot_number <- renderText("")
   })
   
-  
-  # ### add density curves to line-up histograms
-  # output$hist_lineup <- renderPlot({
-  # 
-  # 
-  # })
-  
-    
+
   # print plot number associated w/ user's data
   observeEvent(input$identify, {
     output$user_plot_number <- renderText(bag$all_data_lineup$samp[1])
