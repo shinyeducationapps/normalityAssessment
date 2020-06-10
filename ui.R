@@ -17,21 +17,24 @@ navbarPage("Normality Assessment",
     
     column(3,
       wellPanel(
-        radioButtons("pop_dist", label = "Distribution of Population",
+        radioButtons("pop_dist", "Distribution of Population",
           choices = c("Basic: Select Shape" = "basic", 
-            "Advanced: Select Specific Distribution" = "advanced")
+            "Advanced: Select Distribution" = "advanced"
+          )
         ),
         
         conditionalPanel(
           condition = "input.pop_dist == 'basic'",
-          selectInput("pop_shape", label = "Shape", 
-            choices = shapes, selected = "Normal", width = "75%")
+          selectInput("pop_shape", label = "Shape", choices = shapes, 
+            selected = "Normal"
+          )
         ),
         
         conditionalPanel(
           condition = "input.pop_dist == 'advanced'",
           selectInput("pop_fam", label = "Family",
-            choices = families, selected = "Normal", width = "50%"),
+            choices = families, selected = "Normal", width = "75%"
+          ),
 
           conditionalPanel(
             condition = "input.pop_fam == 't'",
@@ -62,7 +65,7 @@ navbarPage("Normality Assessment",
             
             splitLayout(
               numericInput("gamma_shape", label = "Shape", value = 5),
-              numericInput("gamma_rate", label = "Rate", value = 5)
+              numericInput("gamma_rate", label = "Rate (or Scale ??)", value = 5)   # explain rate vs. scale
             )
           ),
           
@@ -76,13 +79,11 @@ navbarPage("Normality Assessment",
           )
         ),
         
-        splitLayout(
-          numericInput("sample_size", label = "Sample Size", value = 20, 
-            width = "100%"),
-          
-          numericInput("n_plots_rorsch", label = "Number of Plots", value = 16, 
-            width = "100%")
-        ),
+        numericInput("sample_size", label = "Sample Size", value = 20),
+        tags$head(tags$style(type="text/css", "#sample_size{width: 75px;}")),
+        
+        numericInput("n_plots_rorsch", label = "Number of Plots", value = 16),
+        tags$head(tags$style(type="text/css", "#n_plots_rorsch{width: 75px;}")),
         
         radioButtons("rorsch_plot_type", label = "Plot Type",
           choices = c("Normal QQ Plot" = "rorsch_qq",
@@ -147,7 +148,13 @@ navbarPage("Normality Assessment",
             min = 5, max = 50, value = 30, width = "50%")
         )
       )
-    )
+    ) #,
+  
+    # column(2, 
+    #   actionButton("make_new_rorsch", label = "Generate New Plots", 
+    #     class = "btn btn-primary"),
+    #   style = "padding-top: 50px;"
+    # )
   ),
 
   
@@ -175,10 +182,9 @@ navbarPage("Normality Assessment",
             conditionalPanel(
               condition = "input.input_type == 'manually'",
               
-              textAreaInput("user_data", 
-                label = "Either copy and paste a column from a spreadsheet (such 
-                  as Excel) or type values in the box below, separating each by a 
-                  comma.",
+              textAreaInput("user_data", "Either copy and paste a column from a 
+                  spreadsheet (such as Excel) or type values in the box below, 
+                  separating each by a comma.",
                 placeholder = "0, 2, 8"
               )
             ),
@@ -187,20 +193,24 @@ navbarPage("Normality Assessment",
               condition = "input.input_type == 'upload'",
               
               fileInput("data_file", label = "Select a CSV file.", 
-                multiple = FALSE, accept = ".csv"),
+                multiple = FALSE, accept = ".csv"
+              ),
               
               tags$hr(),
               
               checkboxInput("file_header", "Header: check if the first row 
-                contains variable (column) names", value = TRUE),
+                contains variable (column) names", value = TRUE
+              ),
               
               radioButtons("file_separator", "Value Separator", 
                 choices = c(Comma = ",", Semicolon = ";", Tab = "\t"), 
-                selected = ","),
+                selected = ","
+              ),
               
               radioButtons("file_display", "Number of rows to display", 
                 choices = c("First 10" = "first_10", "All" = "all"), 
-                selected = "first_10")
+                selected = "first_10"
+              )
             )
           )
         ),
@@ -219,21 +229,24 @@ navbarPage("Normality Assessment",
               condition = "input.input_type == 'upload'",
               
               selectInput("select_var", "Variable of Interest", 
-                choices = "", selected = "", width = "75%")
-            ),
-            
-            numericInput("n_plots_lineup", label = "Number of Plots", value = 20, 
-              width = "50%"),
-        
-            radioButtons("lineup_plot_type", label = "Plot Type",
-              choices = c("Normal QQ Plot" = "lineup_qq",
-              "Histogram" = "lineup_hist",
-              "Both" = "lineup_qq_and_hist"
+                choices = "", selected = "", width = "75%"
               )
             ),
+            
+            numericInput("n_plots_lineup", label = "Number of Plots", value = 20),
+            tags$head(tags$style(type="text/css", "#n_plots_lineup{width: 75px;}")),
         
+            radioButtons("lineup_plot_type", label = "Plot Type",
+              choices = c(
+                "Normal QQ Plot" = "lineup_qq",
+                "Histogram" = "lineup_hist",
+                "Both" = "lineup_qq_and_hist"
+              )
+            ),
+          
             actionButton("make_lineup_plots", label = "Make Plots", 
-              class = "btn btn-primary")
+              class = "btn btn-primary"
+            )
           )
         ),
         
@@ -253,11 +266,14 @@ navbarPage("Normality Assessment",
           column(2, 
             h4("My Plot:"),
             verbatimTextOutput("user_plot_number", placeholder = TRUE),
-            tags$head(tags$style(type="text/css", "#user_plot_number{max-width: 60px;}")),
+            tags$head(tags$style(type="text/css", 
+              "#user_plot_number{max-width: 60px;}"
+            )),
             align = "center",
-
+  
             actionButton("identify", label = "Identify My Plot", 
-              class = "btn btn-primary")
+              class = "btn btn-primary"
+            )
           ),
           
           conditionalPanel(
@@ -294,16 +310,51 @@ navbarPage("Normality Assessment",
           conditionalPanel(
             condition = "input.lineup_plot_type == 'lineup_qq_and_hist'",
             
-            column(1, offset = 7,
-              checkboxInput("add_density_lineup_both", "Add Normal Density 
-                Curves", value = FALSE)
-            ),
+            # column(1, offset = 7,
+            #   checkboxInput("add_density_lineup_both", "Add Normal Density 
+            #     Curves", value = FALSE)
+            # ),
             
             column(4,
               sliderInput("hist_bins_lineup_both", label = "Number of Bins", 
                 min = 5, max = 50, value = 30, width = "50%")
             )
           )
+        )
+      ),
+      
+      tabPanel("Multiple Users",
+        
+        br(),
+
+        column(3,
+          wellPanel(
+          
+            numericInput("n_users", "Number of Users", value = 1),
+            tags$head(tags$style(type="text/css", "#n_users{width: 75px;}")),
+      
+            numericInput("n_correct", "Number of Users who Identified the Plot",
+              value = 0
+            ),
+            tags$head(tags$style(type="text/css", "#n_correct{width: 75px;}")),
+          
+            numericInput("n_plots_each", "Number of Plots Each User Viewed",
+              value = 20
+            ),
+            tags$head(tags$style(type="text/css", "#n_plots_each{width: 75px;}")),
+        
+            actionButton("calc_pvalue", label = "Calculate p-value", 
+              class = "btn btn-primary",
+            )
+          )
+        ),
+          
+        column(5,
+
+          h4("If multiple users independently examined the same set of plots, 
+            then the following is the p-value adjusted for the number of users."),
+          verbatimTextOutput("multiple_pvalue", placeholder = TRUE),
+          tags$head(tags$style(type="text/css", "#multiple_pvalue{max-width: 75px;}"))
         )
       )
     )

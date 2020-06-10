@@ -14,7 +14,7 @@ shinyServer(function(session, input, output){
   hist_bins_rorsch_both <- reactive(input$hist_bins_rorsch_both)
   hist_bins_lineup <- reactive(input$hist_bins_lineup)
   hist_bins_lineup_both <- reactive(input$hist_bins_lineup_both)
-  d_hist_bins_rorsch <- debounce(hist_bins_rorsch, 1000)        # 1000 = 1 second delay
+  d_hist_bins_rorsch <- debounce(hist_bins_rorsch, 1000)          # 1000 = 1 second delay
   d_hist_bins_rorsch_both <- debounce(hist_bins_rorsch_both, 1000)
   d_hist_bins_lineup <- debounce(hist_bins_lineup, 1000)
   d_hist_bins_lineup_both <- debounce(hist_bins_lineup_both, 1000)
@@ -227,10 +227,15 @@ shinyServer(function(session, input, output){
     #  and other non-numeric characters
     sample_size_user <- nrow(final_user_data)
 
+    
     # randomly permute plot indices
     plot_spots <- sample(input$n_plots_lineup)
 
-    # simulate data -- mean and SD are mean and SD of user's data
+    
+    ### simulate data -- mean and SD are mean and SD of user's data
+    set.seed(1)  # if multiple users involved, they will view the same plots,
+                 # as long as they only run the line-up once
+    
     datasets_lineup <- lapply(1:(input$n_plots_lineup - 1), function(Data) {
       data.frame(Data = rnorm(sample_size_user, mean(final_user_data$Data), 
         sd(final_user_data$Data)
@@ -310,11 +315,28 @@ shinyServer(function(session, input, output){
     output$user_plot_number <- renderText("")
   })
   
-
+  
   # print plot number associated w/ user's data
   observeEvent(input$identify, {
     output$user_plot_number <- renderText(bag$all_data_lineup$samp[1])
   })
+  
+  
+  # calculate and print p-value for multiple users working independently
+  observeEvent(input$calc_pvalue, {
+    
+    pval <- 1 - pbinom(input$n_correct - 1, input$n_users, 1/input$n_plots_each)
+    rounded_p <- round(pval, 4)
+    
+    output$multiple_pvalue <- renderText(
+      
+      ifelse(rounded_p >= 0.0001, 
+        format(rounded_p, scientific = FALSE), 
+        "<0.0001"
+      )
+    )
+  })
+  
 })
 
 
